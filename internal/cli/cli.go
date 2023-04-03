@@ -7,10 +7,7 @@ import (
 
 	"github.com/erodrigufer/maguet/internal/openai"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
-
-const AUTH_TOKEN_NAME = "MAGUET_TOKEN"
 
 func DefineCommands(api openai.ChatGPTResponder) {
 	// Variables to store user defined flags.
@@ -33,12 +30,9 @@ The generated text or chat messages can be printed to the console or saved to a 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Join all the elements of the args slice into a single string,
 			// in which the elements are joined using whitespaces.
+			// The args slice contains the user input in the command-line after
+			// all flags have been read.
 			prompt := strings.Join(args, " ")
-
-			authToken := viper.GetString("authToken")
-			if authToken == "" {
-				return fmt.Errorf("auth token not set, please set the %s environmental variable", AUTH_TOKEN_NAME)
-			}
 
 			// fmt.Printf("maguet prompt subcommand!\nFile path: %s\nOutput file: %s\nTemperature: %.2f\nprompt: %s\n", filePath, outputFile, temperature, prompt)
 			fmt.Printf("Sending completion request to ChatGPT API...\n")
@@ -48,7 +42,7 @@ The generated text or chat messages can be printed to the console or saved to a 
 			}
 
 			// If the outputFile flag has not been set, print the completion.
-			if outputFile != "" {
+			if outputFile == "" {
 				fmt.Printf("%s\n", resp)
 			}
 			return nil
@@ -59,7 +53,6 @@ The generated text or chat messages can be printed to the console or saved to a 
 	promptCmd.Flags().StringVarP(&filePath, "file", "f", "", "The path to the file to read")
 	promptCmd.Flags().StringVarP(&outputFile, "output", "o", "", "The path to the output file")
 	promptCmd.Flags().Float32VarP(&temperature, "temperature", "t", 0.3, "The temperature value for text generation (between 0 and 1)")
-	viper.BindEnv("authToken", AUTH_TOKEN_NAME)
 
 	rootCmd.AddCommand(promptCmd)
 
