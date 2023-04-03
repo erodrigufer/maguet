@@ -3,14 +3,20 @@ package cli
 import (
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/erodrigufer/maguet/internal/openai"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-func DefineCommands() {
+const AUTH_TOKEN_NAME = "MAGUET_TOKEN"
+
+func DefineCommands(api openai.ChatGPTResponder) {
+	// Variables to store user defined flags.
 	var filePath string
 	var outputFile string
-	var temperature float64
+	var temperature float32
 
 	rootCmd := &cobra.Command{
 		Use:   "maguet",
@@ -24,21 +30,41 @@ You can use this app to prompt the ChatGPT model for text/code generation, chat 
 		Short: "Prompt for text generation or chat",
 		Long: `Use the prompt command to generate text or chat with the OpenAI's ChatGPT API.
 The generated text or chat messages can be printed to the console or saved to a file using the -o flag.`,
-		// TODO: handle errors, for example when API connection fails.
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("maguet prompt!\nFile path: %s\nOutput file: %s\nTemperature: %.2f\n", filePath, outputFile, temperature)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Join all the elements of the args slice into a single string,
+			// in which the elements are joined using whitespaces.
+			prompt := strings.Join(args, " ")
+
+			authToken := viper.GetString("authToken")
+			if authToken == "" {
+				return fmt.Errorf("auth token not set, please set the %s environmental variable", AUTH_TOKEN_NAME)
+			}
+
+			// fmt.Printf("maguet prompt subcommand!\nFile path: %s\nOutput file: %s\nTemperature: %.2f\nprompt: %s\n", filePath, outputFile, temperature, prompt)
+			fmt.Printf("Sending completion request to ChatGPT API...\n")
+			resp, err := api.RequestCompletion(prompt, temperature)
+			if err != nil {
+				return fmt.Errorf("Request for completion failed: %v", err)
+			}
+
+			// If the outputFile flag has not been set, print the completion.
+			if outputFile != "" {
+				fmt.Printf("%s\n", resp)
+			}
+			return nil
 		},
 	}
 
 	// Define the flags.
 	promptCmd.Flags().StringVarP(&filePath, "file", "f", "", "The path to the file to read")
 	promptCmd.Flags().StringVarP(&outputFile, "output", "o", "", "The path to the output file")
-	promptCmd.Flags().Float64VarP(&temperature, "temperature", "t", 0.7, "The temperature value for text generation (between 0 and 1)")
+	promptCmd.Flags().Float32VarP(&temperature, "temperature", "t", 0.3, "The temperature value for text generation (between 0 and 1)")
+	viper.BindEnv("authToken", AUTH_TOKEN_NAME)
 
 	rootCmd.AddCommand(promptCmd)
 
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
