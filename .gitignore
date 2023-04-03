@@ -16,3 +16,6 @@
 
 # Ignore the compiled file for CLI app.
 maguet
+
+# Vim-related files
+*.swp
