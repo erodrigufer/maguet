@@ -19,3 +19,6 @@ maguet
 
 # Vim-related files
 *.swp
+
+# .env File
+.env
