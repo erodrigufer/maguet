@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	cb "github.com/atotto/clipboard"
 	"github.com/erodrigufer/maguet/internal/openai"
 	"github.com/spf13/cobra"
 )
@@ -14,6 +15,7 @@ func DefineCommands(api openai.ChatGPTResponder) {
 	var filePath string
 	var outputFile string
 	var temperature float32
+	var clipboard bool
 
 	rootCmd := &cobra.Command{
 		Use:   "maguet",
@@ -45,6 +47,13 @@ The generated text or chat messages can be printed to the console or saved to a 
 			if outputFile == "" {
 				fmt.Printf("--------- BEGIN ChatGPT response---------\n\n%s\n\n--------- END response ---------\n", resp)
 			}
+
+			if clipboard {
+				if err := cb.WriteAll(resp); err != nil {
+					return fmt.Errorf("error copying response to system's clipboard: %w", err)
+				}
+			}
+
 			return nil
 		},
 	}
@@ -53,6 +62,7 @@ The generated text or chat messages can be printed to the console or saved to a 
 	promptCmd.Flags().StringVarP(&filePath, "file", "f", "", "The path to the file to read")
 	promptCmd.Flags().StringVarP(&outputFile, "output", "o", "", "The path to the output file")
 	promptCmd.Flags().Float32VarP(&temperature, "temperature", "t", 0.3, "The temperature value for text generation (between 0 and 1)")
+	promptCmd.Flags().BoolVarP(&clipboard, "clipboard", "c", false, "Copy output to system clipboard.")
 
 	rootCmd.AddCommand(promptCmd)
 
