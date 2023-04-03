@@ -15,10 +15,10 @@ To install maguet, you can clone the repository from GitHub and build the execut
 ```
 git clone https://github.com/erodrigufer/maguet.git
 cd maguet
-make build
+make install
 ```
 
-This will create an executable file named `maguet` in the current directory.
+This will create an executable file named `maguet` in the current directory and copy it to `~/bin`
 
 Alternatively, you can install maguet using the `go install` command:
 
@@ -29,7 +29,7 @@ go install github.com/erodrigufer/maguet/cmd/maguet@latest
 After installing maguet, you can verify that it is working properly by running the following command:
 
 ```
-maguet
+maguet --version
 ```
 
 ## Usage
