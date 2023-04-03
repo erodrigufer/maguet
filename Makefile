@@ -4,6 +4,7 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
+GOVET=$(GOCMD) vet
 
 BINARY_NAME=maguet
 BINARY_UNIX=$(BINARY_NAME)_unix
@@ -15,6 +16,9 @@ build:
 # Runs tests.
 test:
 	$(GOTEST) -v ./...
+
+vet:
+	$(GOVET) -v ./... 
 
 # Removes any build artifacts from previous builds.
 clean:
