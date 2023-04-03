@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const maguet_version = "v0.1.0"
+
 func DefineCommands(api openai.ChatGPTResponder) {
 	// Variables to store user defined flags.
 	var inputFile string
@@ -20,8 +22,9 @@ func DefineCommands(api openai.ChatGPTResponder) {
 	var pager bool
 
 	rootCmd := &cobra.Command{
-		Use:   "maguet",
-		Short: "A simple CLI app for interacting with OpenAI's ChatGPT API",
+		Use:     "maguet",
+		Version: maguet_version,
+		Short:   "A simple CLI app for interacting with OpenAI's ChatGPT API",
 		Long: `maguet is a command-line interface that enables users to interact with OpenAI's ChatGPT API. 
 You can use this app to prompt the ChatGPT model for text/code generation, chat with it and save output to a file.`,
 	}

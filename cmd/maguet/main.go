@@ -12,7 +12,7 @@ import (
 func main() {
 	authtoken, err := app.GetAuthToken()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error retrieving auth token: %v", err)
+		fmt.Fprintf(os.Stderr, "error retrieving auth token: %v\n", err)
 		os.Exit(1)
 	}
 

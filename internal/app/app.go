@@ -11,7 +11,9 @@ import (
 const auth_token_name = "MAGUET_TOKEN"
 
 func GetAuthToken() (string, error) {
-	if err := godotenv.Load(); err != nil {
+	homePath := os.Getenv("HOME")
+	envFile := fmt.Sprintf("%s/.maguet.env", homePath)
+	if err := godotenv.Load(envFile); err != nil {
 		return "", errors.New("error loading .env file")
 	}
 

@@ -23,7 +23,7 @@ This will create an executable file named `maguet` in the current directory.
 Alternatively, you can install maguet using the `go install` command:
 
 ```
-go install github.com/erodrigufer/maguet
+go install github.com/erodrigufer/maguet/cmd/maguet@latest
 ```
 
 After installing maguet, you can verify that it is working properly by running the following command:
@@ -34,11 +34,7 @@ maguet
 
 ## Usage
 
-To use maguet, you must first set your OpenAI API key as an environment variable:
-
-```
-export MAGUET_TOKEN=<your-api-key>
-```
+To use maguet, you must first set your OpenAI API key as an environment variable by storing your OpenAI API key at `~/.maguet.env` as `MAGUET_TOKEN=<your-api-key>`.
 
 Once you have set your API key, you can use maguet to request text completions from ChatGPT. For example:
 
