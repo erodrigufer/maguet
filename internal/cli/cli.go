@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const maguet_version = "v0.1.0"
+const maguet_version = "v0.1.1"
 
 func DefineCommands(api openai.ChatGPTResponder) {
 	// Variables to store user defined flags.
@@ -30,8 +30,9 @@ You can use this app to prompt the ChatGPT model for text/code generation, chat 
 	}
 
 	completeCmd := &cobra.Command{
-		Use:   "complete",
-		Short: "Prompt for text generation/completion",
+		Use:     "complete",
+		Aliases: []string{"comp", "c", "co"},
+		Short:   "Prompt for text generation/completion",
 		Long: `Use the complete command to generate text or chat with the OpenAI's ChatGPT API.
 The generated text or chat messages can be printed to the console or saved to a file using the -o flag.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
