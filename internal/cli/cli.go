@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 
 	cb "github.com/atotto/clipboard"
@@ -16,6 +17,7 @@ func DefineCommands(api openai.ChatGPTResponder) {
 	var outputFile string
 	var temperature float32
 	var clipboard bool
+	var pager bool
 
 	rootCmd := &cobra.Command{
 		Use:   "maguet",
@@ -35,7 +37,7 @@ The generated text or chat messages can be printed to the console or saved to a 
 			// The args slice contains the user input in the command-line after
 			// all flags have been read.
 			prompt := strings.Join(args, " ")
-			if err := completeExecution(prompt, inputFile, outputFile, temperature, clipboard, api); err != nil {
+			if err := completeExecution(prompt, inputFile, outputFile, temperature, clipboard, pager, api); err != nil {
 				return err
 			}
 			return nil
@@ -47,6 +49,7 @@ The generated text or chat messages can be printed to the console or saved to a 
 	completeCmd.Flags().StringVarP(&outputFile, "output", "o", "", "The path to the output file")
 	completeCmd.Flags().Float32VarP(&temperature, "temperature", "t", 0.3, "The temperature value for text generation (between 0 and 1)")
 	completeCmd.Flags().BoolVarP(&clipboard, "clipboard", "c", false, "Copy output to system clipboard.")
+	completeCmd.Flags().BoolVarP(&pager, "pager", "p", false, "Show response in a pager.")
 
 	rootCmd.AddCommand(completeCmd)
 
@@ -56,8 +59,9 @@ The generated text or chat messages can be printed to the console or saved to a 
 	}
 }
 
-func completeExecution(prompt, inputFile, outputFile string, temperature float32, clipboard bool, api openai.ChatGPTResponder) error {
+func completeExecution(prompt, inputFile, outputFile string, temperature float32, clipboard, pager bool, api openai.ChatGPTResponder) error {
 	if inputFile != "" {
+		fmt.Println("Using input file to aggregate prompt...")
 		// Read the content of the file into a byte slice.
 		fileData, err := os.ReadFile(inputFile)
 		if err != nil {
@@ -78,12 +82,22 @@ func completeExecution(prompt, inputFile, outputFile string, temperature float32
 
 	// If the outputFile flag has not been set, print the completion.
 	if outputFile == "" {
-		fmt.Printf("--------- BEGIN ChatGPT response---------\n\n%s\n\n--------- END response ---------\n", resp)
-	} else {
+		if pager {
+			if err := openPager(resp); err != nil {
+				return fmt.Errorf("error while displaying text in pager: %w", err)
+			}
+		} else { // Do not use a pager to display output.
+			fmt.Printf("--------- BEGIN ChatGPT response---------\n\n%s\n\n--------- END response ---------\n", resp)
+		}
+	} else { // Store in output file.
 		fmt.Printf("Writing ChatGPT response into %s file...\n", outputFile)
 		if err := os.WriteFile(outputFile, []byte(resp), 0644); err != nil {
 			return fmt.Errorf("error writing response to output file: %w", err)
 		}
+		if err := openPager(resp); err != nil {
+			fmt.Printf("error while displaying text in pager: %v\n", err)
+		}
+
 	}
 
 	if clipboard {
@@ -94,5 +108,18 @@ func completeExecution(prompt, inputFile, outputFile string, temperature float32
 		fmt.Printf("\nChatGPT response was successfully copied into the system's clipboard.\n")
 	}
 
+	return nil
+}
+
+func openPager(text string) error {
+	pagerCmd := exec.Command("less")
+	pagerCmd.Stdin = strings.NewReader(text)
+	pagerCmd.Stdout = os.Stdout
+
+	// Fork off a process and wait for it to terminate.
+	err := pagerCmd.Run()
+	if err != nil {
+		return fmt.Errorf("error while forking process with pager: %w", err)
+	}
 	return nil
 }
