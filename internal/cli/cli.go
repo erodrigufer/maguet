@@ -43,7 +43,7 @@ The generated text or chat messages can be printed to the console or saved to a 
 
 			// If the outputFile flag has not been set, print the completion.
 			if outputFile == "" {
-				fmt.Printf("%s\n", resp)
+				fmt.Printf("--------- BEGIN ChatGPT response---------\n\n%s\n\n--------- END response ---------\n", resp)
 			}
 			return nil
 		},
