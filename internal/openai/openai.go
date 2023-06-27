@@ -9,7 +9,7 @@ import (
 )
 
 type ChatGPTResponder interface {
-	RequestCompletion(string, float32) (string, error)
+	RequestCompletion(string, float32, float32) (string, error)
 }
 
 type OpenAIClient struct {
@@ -23,9 +23,16 @@ func NewClient(authToken string) *OpenAIClient {
 }
 
 // RequestCompletion, request ChatGPT for a text completion.
-func (c *OpenAIClient) RequestCompletion(prompt string, temperature float32) (string, error) {
+func (c *OpenAIClient) RequestCompletion(prompt string, temperature, openaiModel float32) (string, error) {
+	var model string
+	if openaiModel == 4.0 {
+		// GPT4 still has not been made widely available as an API by OpenAI.
+		model = openai.GPT4
+	} else {
+		model = openai.GPT3Dot5Turbo
+	}
 	// Timeout for API call.
-	timeout, err := time.ParseDuration("45s")
+	timeout, err := time.ParseDuration("1m30s")
 	if err != nil {
 		return "", fmt.Errorf("error parsing time duration: %w", err)
 	}
@@ -35,7 +42,8 @@ func (c *OpenAIClient) RequestCompletion(prompt string, temperature float32) (st
 	resp, err := c.client.CreateChatCompletion(
 		ctx,
 		openai.ChatCompletionRequest{
-			Model:       openai.GPT3Dot5Turbo,
+			// Model:       openai.GPT3Dot5Turbo,
+			Model:       model,
 			Temperature: temperature,
 			Messages: []openai.ChatCompletionMessage{
 				{
@@ -65,6 +73,6 @@ func NewMockClient() *MockOpenAIClient {
 
 }
 
-func (m *MockOpenAIClient) RequestCompletion(prompt string, temperature float32) (string, error) {
+func (m *MockOpenAIClient) RequestCompletion(prompt string, temperature, model float32) (string, error) {
 	return "Using Mock OpenAI API", nil
 }
