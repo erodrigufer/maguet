@@ -5,14 +5,15 @@ The name "maguet" comes from the Catalan language and means "small wizard" (it c
 
 ## Requirements
 
-To use maguet, you must have Go installed on your system.
-You will also need an OpenAI API key to access the ChatGPT API.
+1. Go v1.21
+2. An OpenAI API key to access the ChatGPT API.
+3. [glow](https://github.com/charmbracelet/glow) (_used as the default pager_)
 
 ## Installation
 
 To install maguet, you can clone the repository from GitHub and build the executable using the following commands:
 
-```
+```bash
 git clone https://github.com/erodrigufer/maguet.git
 cd maguet
 make install
@@ -22,13 +23,13 @@ This will create an executable file named `maguet` in the current directory and 
 
 Alternatively, you can install maguet using the `go install` command:
 
-```
+```bash
 go install github.com/erodrigufer/maguet/cmd/maguet@latest
 ```
 
 After installing maguet, you can verify that it is working properly by running the following command:
 
-```
+```bash
 maguet --version
 ```
 
@@ -38,7 +39,7 @@ To use maguet, you must first set your OpenAI API key as an environment variable
 
 Once you have set your API key, you can use maguet to request text completions from ChatGPT. For example:
 
-```
+```bash
 maguet complete "Complete this sentence: The quick brown fox"
 ```
 
@@ -46,7 +47,7 @@ This will send a request to ChatGPT to complete the sentence "The quick brown fo
 
 For more information execute the help menu:
 
-```
+```bash
 maguet complete -h
 ```
 

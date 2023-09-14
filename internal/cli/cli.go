@@ -122,7 +122,7 @@ func completeExecution(prompt, inputFile, outputFile string, temperature, openai
 }
 
 func openPager(text string) error {
-	pagerCmd := exec.Command("less")
+	pagerCmd := exec.Command("glow")
 	pagerCmd.Stdin = strings.NewReader(text)
 	pagerCmd.Stdout = os.Stdout
 
