@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const maguet_version = "v0.2.1"
+const maguet_version = "v0.3.0"
 
 func DefineCommands(api openai.ChatGPTResponder) {
 	// Variables to store user defined flags.
