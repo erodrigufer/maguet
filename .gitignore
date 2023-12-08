@@ -22,3 +22,5 @@ maguet
 
 # .env File
 .env
+
+/build

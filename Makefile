@@ -9,9 +9,11 @@ GOVET=$(GOCMD) vet
 BINARY_NAME=maguet
 BINARY_UNIX=$(BINARY_NAME)_unix
 
+.PHONY: build clean test vet
+
 # Builds the Go binary for the current platform.
 build:
-	$(GOBUILD) -o $(BINARY_NAME) -v ./cmd/$(BINARY_NAME)
+	$(GOBUILD) -o ./build/$(BINARY_NAME) -v ./cmd/$(BINARY_NAME)
 
 # Runs tests.
 test:
@@ -23,20 +25,14 @@ vet:
 # Removes any build artifacts from previous builds.
 clean:
 	$(GOCLEAN)
-	rm -f $(BINARY_NAME)
-	rm -f $(BINARY_UNIX)
+	rm -f ./build/$(BINARY_NAME)
 
 install: build
-	cp ./$(BINARY_NAME) ~/bin/
+	cp ./build/$(BINARY_NAME) ~/bin/
 
 # Builds the Go binary and depends on the `build` target.
 # run: build
 # 	./$(BINARY_NAME)
-
-# Installs any Go dependencies.
-# deps:
-# $(GOGET) github.com/markbates/goth
-# $(GOGET) github.com/markbates/pop
 
 # Cross-compiles the Go binary for Linux on an AMD64 architecture.
 # build-linux:
