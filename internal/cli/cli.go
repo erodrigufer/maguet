@@ -11,13 +11,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const maguet_version = "v0.3.0"
+const maguet_version = "v0.4.0"
 
 func DefineCommands(api openai.ChatGPTResponder) {
 	// Variables to store user defined flags.
 	var inputFile string
 	var outputFile string
-	var openaiModel float32
+	var openaiModel string
 	var temperature float32
 	var clipboard bool
 	var pager bool
@@ -52,7 +52,7 @@ The generated text or chat messages can be printed to the console or saved to a 
 	// Define the flags.
 	completeCmd.Flags().StringVarP(&inputFile, "input", "i", "", "The path to the input file to read")
 	completeCmd.Flags().StringVarP(&outputFile, "output", "o", "", "The path to the output file")
-	completeCmd.Flags().Float32VarP(&openaiModel, "model", "m", 3.5, "OpenAI model used to request a response from a prompt (e.g. '4.0' for GPT 4).")
+	completeCmd.Flags().StringVarP(&openaiModel, "model", "m", "3.5", "OpenAI model used to request a response from a prompt (e.g. '4.0' for GPT 4).")
 	completeCmd.Flags().Float32VarP(&temperature, "temperature", "t", 0.3, "The temperature value for text generation (between 0 and 1)")
 	completeCmd.Flags().BoolVarP(&clipboard, "clipboard", "c", false, "Copy output to system clipboard.")
 	completeCmd.Flags().BoolVarP(&pager, "pager", "p", false, "Show response in a pager.")
@@ -65,8 +65,8 @@ The generated text or chat messages can be printed to the console or saved to a 
 	}
 }
 
-func completeExecution(prompt, inputFile, outputFile string, temperature, openaiModel float32, clipboard, pager bool, api openai.ChatGPTResponder) error {
-	if openaiModel != 4.0 && openaiModel != 3.5 {
+func completeExecution(prompt, inputFile, outputFile string, temperature float32, openaiModel string, clipboard, pager bool, api openai.ChatGPTResponder) error {
+	if openaiModel != "4.0" && openaiModel != "3.5" && openaiModel != "4" && openaiModel != "4o" {
 		return fmt.Errorf("invalid ChatGPT model (invalid 'model' flag values)")
 	}
 
@@ -84,7 +84,7 @@ func completeExecution(prompt, inputFile, outputFile string, temperature, openai
 		prompt = fmt.Sprintf("%s:\n\"%s\"", prompt, content)
 	}
 
-	fmt.Printf("Sending completion request to ChatGPT API...\nUsing ChatGPT %.1f\n", openaiModel)
+	fmt.Printf("Sending completion request to ChatGPT API...\nUsing ChatGPT %s\n", openaiModel)
 	resp, err := api.RequestCompletion(prompt, temperature, openaiModel)
 	if err != nil {
 		return fmt.Errorf("Request for completion failed: %w", err)

@@ -9,7 +9,7 @@ import (
 )
 
 type ChatGPTResponder interface {
-	RequestCompletion(string, float32, float32) (string, error)
+	RequestCompletion(string, float32, string) (string, error)
 }
 
 type OpenAIClient struct {
@@ -23,11 +23,10 @@ func NewClient(authToken string) *OpenAIClient {
 }
 
 // RequestCompletion, request ChatGPT for a text completion.
-func (c *OpenAIClient) RequestCompletion(prompt string, temperature, openaiModel float32) (string, error) {
+func (c *OpenAIClient) RequestCompletion(prompt string, temperature float32, openaiModel string) (string, error) {
 	var model string
-	if openaiModel == 4.0 {
-		// GPT4 still has not been made widely available as an API by OpenAI.
-		model = openai.GPT4
+	if openaiModel == "4.0" || openaiModel == "4" || openaiModel == "4o" {
+		model = openai.GPT4o
 	} else {
 		model = openai.GPT3Dot5Turbo
 	}
@@ -68,11 +67,9 @@ type MockOpenAIClient struct {
 }
 
 func NewMockClient() *MockOpenAIClient {
-	mock := new(MockOpenAIClient)
-	return mock
-
+	return new(MockOpenAIClient)
 }
 
-func (m *MockOpenAIClient) RequestCompletion(prompt string, temperature, model float32) (string, error) {
+func (m *MockOpenAIClient) RequestCompletion(prompt string, temperature float32, model string) (string, error) {
 	return "Using Mock OpenAI API", nil
 }
