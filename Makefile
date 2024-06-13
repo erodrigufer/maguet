@@ -25,7 +25,7 @@ vet:
 # Removes any build artifacts from previous builds.
 clean:
 	$(GOCLEAN)
-	rm -f ./build/$(BINARY_NAME)
+	rm -rf ./build/
 
 install: build
 	cp ./build/$(BINARY_NAME) ~/bin/

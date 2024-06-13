@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const maguet_version = "v0.4.0"
+const maguet_version = "v0.4.1"
 
 func DefineCommands(api openai.ChatGPTResponder) {
 	// Variables to store user defined flags.
@@ -52,7 +52,7 @@ The generated text or chat messages can be printed to the console or saved to a 
 	// Define the flags.
 	completeCmd.Flags().StringVarP(&inputFile, "input", "i", "", "The path to the input file to read")
 	completeCmd.Flags().StringVarP(&outputFile, "output", "o", "", "The path to the output file")
-	completeCmd.Flags().StringVarP(&openaiModel, "model", "m", "3.5", "OpenAI model used to request a response from a prompt (e.g. '4.0' for GPT 4).")
+	completeCmd.Flags().StringVarP(&openaiModel, "model", "m", "4o", "OpenAI model used to request a response from a prompt (e.g. '4.0' for GPT 4).")
 	completeCmd.Flags().Float32VarP(&temperature, "temperature", "t", 0.3, "The temperature value for text generation (between 0 and 1)")
 	completeCmd.Flags().BoolVarP(&clipboard, "clipboard", "c", false, "Copy output to system clipboard.")
 	completeCmd.Flags().BoolVarP(&pager, "pager", "p", false, "Show response in a pager.")
